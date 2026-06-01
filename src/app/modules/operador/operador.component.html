@@ -1,0 +1,37 @@
+<div class="operador-container">
+  <h2 class="title-tech">Personal Operativo (Fontaneros)</h2>
+
+  <div class="card-form">
+    <div class="input-group">
+      <input type="text" [(ngModel)]="nuevoOperador.nombre" name="nombre" placeholder="Nombre completo">
+      <input type="text" [(ngModel)]="nuevoOperador.cedula" name="cedula" placeholder="Cédula">
+      <select [(ngModel)]="nuevoOperador.especialidad" name="especialidad">
+        <option value="">Seleccione Especialidad</option>
+        <option value="Mantenimiento">Mantenimiento</option>
+        <option value="Toma de Lecturas">Toma de Lecturas</option>
+      </select>
+      <button (click)="registrar()" class="btn-action">Añadir Operador</button>
+    </div>
+  </div>
+
+  <table class="tech-table">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Especialidad</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let op of operadores">
+        <td>{{ op.nombre }}</td>
+        <td>{{ op.especialidad }}</td>
+        <td><span class="status-tag">{{ op.estado }}</span></td>
+        <td>
+          <button (click)="borrar(op.idOperador!)" class="btn-del">Quitar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

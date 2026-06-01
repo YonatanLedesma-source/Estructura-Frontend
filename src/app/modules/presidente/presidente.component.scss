@@ -1,0 +1,62 @@
+$azul-presidente: #001a33; // Un azul más serio y formal
+$azul-vibrante: #00A8E8;
+
+.presidente-wrapper {
+  padding: 30px;
+  background: #fdfdfd;
+
+  .header-banner {
+    background: $azul-presidente;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+  }
+}
+
+.grid-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 20px;
+}
+
+.card-presidencia {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  
+  input {
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+  }
+}
+
+.btn-presidente {
+  width: 100%;
+  background: $azul-vibrante;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.table-v {
+  width: 100%;
+  border-collapse: collapse;
+  th { text-align: left; padding: 12px; border-bottom: 2px solid $azul-vibrante; }
+  td { padding: 12px; border-bottom: 1px solid #eee; }
+}
+
+.active-badge {
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}

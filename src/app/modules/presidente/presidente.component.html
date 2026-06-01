@@ -1,0 +1,37 @@
+<div class="presidente-wrapper">
+  <div class="header-banner">
+    <h1><i class="fas fa-crown"></i> Panel de Presidencia - Pureza Rural</h1>
+  </div>
+
+  <div class="grid-layout">
+    <div class="card-presidencia">
+      <h3>Registrar Miembro de la Junta</h3>
+      <form (ngSubmit)="registrar()">
+        <input type="text" [(ngModel)]="nuevoPresidente.nombre" name="nombre" placeholder="Nombre" required>
+        <input type="text" [(ngModel)]="nuevoPresidente.cedula" name="cedula" placeholder="Cédula">
+        <input type="text" [(ngModel)]="nuevoPresidente.periodoGestion" name="periodo" placeholder="Periodo (Ej: 2026-2028)">
+        <button type="submit" class="btn-presidente">Actualizar Cargo</button>
+      </form>
+    </div>
+
+    <div class="card-listado">
+      <h3>Historial de Mandatos</h3>
+      <table class="table-v">
+        <thead>
+          <tr>
+            <th>Presidente</th>
+            <th>Periodo</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of miembrosJunta">
+            <td>{{ p.nombre }} {{ p.apellido }}</td>
+            <td>{{ p.periodoGestion }}</td>
+            <td><span class="active-badge">Vigente</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

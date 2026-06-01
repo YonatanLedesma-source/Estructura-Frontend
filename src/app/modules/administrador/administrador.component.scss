@@ -1,0 +1,121 @@
+// Variables de color de Pureza Rural
+$azul-oscuro: #003366;
+$azul-vibrante: #00A8E8;
+$gris-fondo: #F4F7F9;
+$blanco: #ffffff;
+$danger: #e74c3c;
+
+.admin-wrapper {
+  padding: 40px;
+  background-color: $gris-fondo;
+  min-height: 100vh;
+
+  .title-blue {
+    color: $azul-oscuro;
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 30px;
+    border-left: 6px solid $azul-vibrante;
+    padding-left: 20px;
+    text-transform: uppercase;
+  }
+}
+
+// Estilo del Formulario (Tarjeta)
+.form-card {
+  background: $blanco;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 51, 102, 0.08);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 40px;
+
+  input {
+    flex: 1;
+    min-width: 200px;
+    padding: 12px 15px;
+    border: 2px solid #e1e8ed;
+    border-radius: 8px;
+    font-family: 'Open Sans', sans-serif;
+    transition: all 0.3s ease;
+
+    &:focus {
+      outline: none;
+      border-color: $azul-vibrante;
+      box-shadow: 0 0 8px rgba(0, 168, 232, 0.2);
+    }
+  }
+
+  .btn-aqua {
+    background-color: $azul-vibrante;
+    color: $blanco;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.3s;
+
+    &:hover {
+      background-color: darken($azul-vibrante, 10%);
+      transform: translateY(-2px);
+    }
+  }
+}
+
+// Estilo de la Tabla Técnica
+.table-rural {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 10px; // Espaciado entre filas para efecto moderno
+
+  thead th {
+    background-color: $azul-oscuro;
+    color: $blanco;
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+    &:first-child { border-radius: 10px 0 0 10px; }
+    &:last-child { border-radius: 0 10px 10px 0; }
+  }
+
+  tbody tr {
+    background-color: $blanco;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    transition: transform 0.2s;
+
+    &:hover {
+      transform: scale(1.01);
+      background-color: #fcfcfc;
+    }
+
+    td {
+      padding: 15px;
+      color: $azul-oscuro;
+      border-top: 1px solid #f0f0f0;
+      border-bottom: 1px solid #f0f0f0;
+
+      &:first-child { border-left: 1px solid #f0f0f0; border-radius: 10px 0 0 10px; }
+      &:last-child { border-right: 1px solid #f0f0f0; border-radius: 0 10px 10px 0; }
+    }
+  }
+}
+
+// Botones de acción dentro de la tabla
+.btn-delete {
+  background-color: transparent;
+  color: $danger;
+  border: 1px solid $danger;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.3s;
+
+  &:hover {
+    background-color: $danger;
+    color: white;
+  }
+}

@@ -1,0 +1,39 @@
+$azul-oscuro: #003366;
+$azul-agua: #00A8E8;
+
+.operador-container {
+  padding: 30px;
+  .title-tech { color: $azul-oscuro; border-bottom: 2px solid $azul-agua; padding-bottom: 10px; }
+}
+
+.card-form {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+  margin-bottom: 30px;
+
+  input, select {
+    padding: 10px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+}
+
+.btn-action {
+  background: $azul-agua;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  &:hover { background: darken($azul-agua, 10%); }
+}
+
+.tech-table {
+  width: 100%;
+  border-collapse: collapse;
+  th { background: $azul-oscuro; color: white; padding: 12px; }
+  td { padding: 12px; border-bottom: 1px solid #eee; }
+}

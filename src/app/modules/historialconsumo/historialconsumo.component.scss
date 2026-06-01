@@ -1,0 +1,210 @@
+// Definición de variables para colores (puedes ajustarlos a tu manual de marca)
+$primary-color: #003366; 
+$secondary-color: #3498db; // Azul agua
+$success-color: #27ae60;
+$danger-color: #e74c3c;
+$bg-light: #F4F7F9;
+
+.container {
+  padding: 2rem;
+  background-color: $bg-light;
+  min-height: 100vh;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.title-main {
+    color: $primary-color;
+    font-weight: 800;
+    font-size: 2rem;
+    border-left: 6px solid $secondary-color;
+    padding-left: 20px;
+    margin-bottom: 5px;
+}
+
+.stats-row {
+    display: flex;
+    gap: 20px;
+}
+
+.stat-card {
+    background: white;
+    padding: 20px 30px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    
+    i { font-size: 1.5rem; color: $secondary-color; background: #f0f7ff; padding: 15px; border-radius: 12px; }
+    .stat-value { display: block; font-size: 1.4rem; font-weight: 800; color: $primary-color; }
+    .stat-label { font-size: 0.8rem; color: #7f8c8d; text-transform: uppercase; letter-spacing: 1px; }
+
+    &.accent {
+        background: linear-gradient(135deg, $primary-color, #004a99);
+        i { background: rgba(255,255,255,0.1); color: white; }
+        .stat-value, .stat-label { color: white; }
+    }
+}
+
+// Estilos para la tarjeta del formulario
+.card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: none;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  label {
+    font-weight: 600;
+    color: lighten($primary-color, 10%);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .form-control {
+    border-radius: 8px;
+    border: 1.5px solid #e1e8ed;
+    padding: 0.6rem;
+    transition: all 0.3s ease;
+
+    &:focus {
+      border-color: $secondary-color;
+      box-shadow: 0 0 0 3px rgba($secondary-color, 0.1);
+    }
+
+    &.is-invalid {
+      border-color: $danger-color;
+      background-color: rgba($danger-color, 0.02);
+    }
+  }
+
+  .error-msg {
+    color: $danger-color;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-top: 4px;
+    display: block;
+    animation: fadeIn 0.3s ease;
+  }
+}
+
+// Botones estilizados
+.btn-success {
+  background-color: $success-color;
+  border: none;
+  font-weight: 600;
+  padding: 0.7rem;
+  border-radius: 8px;
+  transition: all 0.3s;
+
+  &:hover {
+    background-color: darken($success-color, 10%);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+}
+
+// Tabla de datos técnica
+.table {
+  margin-top: 2.5rem;
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0, 51, 102, 0.05);
+  border-collapse: separate;
+  border-spacing: 0;
+
+  thead {
+    background: linear-gradient(to right, $primary-color, darken($primary-color, 10%));
+    color: white;
+    
+    th {
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 1.5px;
+      padding: 1.5rem 1rem;
+      border: none;
+    }
+  }
+
+  tbody tr {
+    transition: all 0.3s ease;
+    &:hover {
+      background-color: #f4faff;
+      transform: scale(1.002);
+    }
+
+    td {
+      padding: 1.2rem 1rem;
+      vertical-align: middle;
+      color: #555;
+      border-bottom: 1px solid #f1f4f8;
+    }
+  }
+}
+
+// Estilo creativo para badges y botones de acción
+.status-badge {
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    &::before {
+        content: '';
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    &.status-success {
+        background-color: rgba($success-color, 0.1);
+        color: darken($success-color, 15%);
+        &::before { background-color: $success-color; }
+    }
+
+    &.status-danger {
+        background-color: rgba($danger-color, 0.1);
+        color: darken($danger-color, 15%);
+        &::before { background-color: $danger-color; }
+    }
+}
+
+.btn-action {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    margin: 0 5px;
+    transition: 0.3s;
+    cursor: pointer;
+    
+    &.btn-delete { background: #fff5f5; color: $danger-color; &:hover { background: $danger-color; color: white; } }
+    &.btn-edit { background: #f0f7ff; color: $secondary-color; &:hover { background: $secondary-color; color: white; } }
+}
+
+// Estilo para el campo de moneda o valor total
+.valor-total {
+  font-weight: bold;
+  color: $success-color;
+}

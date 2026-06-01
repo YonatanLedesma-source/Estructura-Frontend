@@ -1,0 +1,143 @@
+<div class="medidores-section">
+    <div class="medidores-container">
+        
+        <div class="header-block">
+            <h2 class="main-title">Gestión de Medidores</h2>
+            <p class="subtitle-text">Administración, registro y actualización de los equipos de medición del acueducto rural.</p>
+            <div class="title-line"></div>
+        </div>
+
+        <div class="search-box-wrapper card-shadow">
+            <div class="search-grid">
+                <div class="input-with-icon">
+                    <i class="fas fa-search field-icon"></i>
+                    <input type="text" [formControl]="filtroSerial" class="form-field" placeholder="Buscar por número de serial...">
+                </div>
+                <div class="search-actions">
+                    <button (click)="buscarPorSerial()" class="btn-primary-custom">
+                        <i class="fas fa-filter"></i> Buscar
+                    </button>
+                    <button type="button" (click)="limpiarBusqueda()" class="btn-secondary-custom" title="Limpiar">
+                        <i class="fas fa-undo"></i> Limpiar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content-grid">
+            
+            <div class="form-column">
+                <div class="card-custom card-shadow">
+                    <div class="card-header-inner">
+                        <i class="fas" [ngClass]="editandoId ? 'fa-edit' : 'fa-plus-circle'"></i>
+                        <h3>{{ editandoId ? 'Modificar' : 'Registrar' }} Medidor</h3>
+                    </div>
+                    
+                    <form [formGroup]="form" (ngSubmit)="guardar()" class="custom-form-layout">
+                        <div class="form-group-custom">
+                            <label>Número de Serial</label>
+                            <input type="text" formControlName="serial" class="form-field" placeholder="Ej. ACU-2026-99">
+                        </div>
+                        
+                        <div class="form-group-custom">
+                            <label>Marca del Dispositivo</label>
+                            <input type="text" formControlName="marca" class="form-field" placeholder="Ej. Elster, Actaris...">
+                        </div>
+                        
+                        <div class="form-group-custom">
+                            <label>Estado de Operación</label>
+                            <select formControlName="estado" class="form-field-select">
+                                <option value="Activo">Activo</option>
+                                <option value="Inactivo">Inactivo</option>
+                                <option value="Mantenimiento">Mantenimiento</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group-custom">
+                            <label>Fecha de Instalación</label>
+                            <input type="date" formControlName="fechaInstalacion" class="form-field">
+                        </div>
+                        
+                        <div class="form-buttons-stack">
+                            <button type="submit" class="btn-submit-action" [disabled]="form.invalid">
+                                <i class="fas fa-save"></i> {{ editandoId ? 'Actualizar Medidor' : 'Guardar Registro' }}
+                            </button>
+                            <button *ngIf="editandoId" type="button" (click)="cancelarEdicion()" class="btn-cancel-action">
+                                Cancelar Cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="table-column">
+                <div class="card-custom card-shadow">
+                    <div class="card-header-inner">
+                        <i class="fas fa-list"></i>
+                        <h3>Equipos Instalados</h3>
+                    </div>
+
+                    <div *ngIf="cargando" class="loading-box">
+                        <div class="spinner"></div>
+                        <p>Consultando registros...</p>
+                    </div>
+                    
+                    <div class="table-scroll-wrapper" *ngIf="!cargando">
+                        <table class="premium-table">
+                            <thead>
+                                <tr>
+                                    <th>Serial</th>
+                                    <th>Marca</th>
+                                    <th>Estado</th>
+                                    <th class="actions-head">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let medidor of medidores">
+                                    <td class="serial-td">{{ medidor.serial }}</td>
+                                    <td>{{ medidor.marca }}</td>
+                                    <td>
+                                        <span class="custom-badge" [ngClass]="{
+                                            'badge-active': medidor.estado === 'Activo',
+                                            'badge-inactive': medidor.estado === 'Inactivo',
+                                            'badge-warning': medidor.estado === 'Mantenimiento'
+                                        }">
+                                            {{ medidor.estado }}
+                                        </span>
+                                    </td>
+                                    <td class="actions-td">
+                                        <button (click)="iniciarEdicion(medidor)" class="action-btn edit" title="Editar">
+                                            <i class="fas fa-pen"></i>
+                                        </button>
+                                        <button (click)="eliminar(medidor.id)" class="action-btn delete" title="Eliminar">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="medidores.length === 0">
+                                    <td colspan="4" class="empty-table-row">
+                                        <i class="fas fa-folder-open"></i>
+                                        <p>No se encontraron medidores registrados en el sistema.</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="alerts-container">
+            <div *ngIf="mensaje && mensaje !== ' '" class="custom-ui-alert success">
+                <i class="fas fa-check-circle"></i>
+                <span>{{ mensaje }}</span>
+            </div>
+            <div *ngIf="error && error !== ' '" class="custom-ui-alert danger">
+                <i class="fas fa-exclamation-circle"></i>
+                <span>{{ error }}</span>
+            </div>
+        </div>
+
+    </div>
+</div>

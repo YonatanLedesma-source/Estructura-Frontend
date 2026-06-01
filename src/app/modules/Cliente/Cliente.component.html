@@ -1,0 +1,93 @@
+
+<section class="page">
+    <h2>Clientes</h2>
+    <p class="subtitle">CRUD al backend con SpringBoot</p>
+
+    <div class="alerts">
+        @if (mensaje) {
+            <p class="success">{{ mensaje }}</p>
+        }
+        @if (error) {
+            <p class="error">{{ error }}</p>
+        }
+    </div>
+
+    <div class="search-box">
+     <input
+        type="text"
+        [formControl]="filtroCedula"
+        placeholder="Buscar por cédula"
+        />
+    <button type="button" (click)="buscarPorCedula()">Buscar</button>
+    <button type="button" class="secondary" (click)="limpiarBusqueda()">Limpiar</button>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="guardar()" class="form-grid">
+        <input type="text" formControlName="nombre" placeholder="Nombre" />
+        <input type="email" formControlName="email" placeholder="Email" />
+        <input type="text" formControlName="telefono" placeholder="Teléfono" />
+        <input type="text" formControlName="direccion" placeholder="Dirección" />
+        <input type="text" formControlName="cedula" placeholder="Cédula" />
+        <input type="number" formControlName="numeroMedidor" placeholder="Número de Medidor" />
+        <input type="number" formControlName="lectura" placeholder="Lectura" />
+
+        <label class="checkbox">
+            <input type="checkbox" formControlName="estado" />
+            Activo
+        </label>
+
+        <div class="form-actions">
+            <button type="submit">{{ editandoId != null ? 'actualizar' : 'Crear' }}</button>
+            @if (editandoId != null) {
+                <button type="button" class="secondary" (click)="cancelarEdicion()">Cancelar</button>
+            }
+        </div>
+    </form>
+
+@if (cargando) {
+    <p>cargando...</p>
+} @else {
+    <div class="table-wrap">
+      <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Cédula</th>
+                <th>Email</th>
+                <th>Teléfono</th>
+                <th>Dirección</th>
+                <th>Número de Medidor</th>  
+                <th>Lectura</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (b of clientes; track $index) {
+                <tr>
+                    <td>{{ b.id }}</td>
+                    <td>{{ b.nombre }}</td>
+                    <td>{{ b.cedula }}</td>
+                    <td>{{ b.email }}</td>
+                    <td>{{ b.telefono }}</td>
+                    <td>{{ b.direccion }}</td>
+                    <td>{{ b.numeroMedidor }}</td>
+                    <td>{{ b.lectura }}</td>
+                    <td>{{ b.estado ? 'Activo' : 'Inactivo' }}</td>
+                    <td class="actions">
+                        <button type="button" class="secondary" (click)="iniciarEdicion(b)">Editar</button>
+                        <button type="button" class="danger" (click)="eliminar(b.id)">Eliminar</button>
+                    </td>
+                </tr>
+            }
+
+            @if (!clientes.length) {
+                <tr>
+                    <td colspan="10" class="empty">No hay clientes para mostrar</td>
+                </tr>
+            }
+        </tbody>
+      </table>
+    </div>
+}

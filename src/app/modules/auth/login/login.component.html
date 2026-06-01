@@ -1,0 +1,55 @@
+<section class="auth-page auth-login">
+  <div class="auth-card">
+    <div class="auth-panel">
+      <div class="auth-panel-content">
+        <img src="assets/logoPurezaRural.png" alt="Pureza Rural" class="brand-logo" />
+        <h1>Pureza Rural</h1>
+        <p>Accede al panel de gestión con seguridad, transparencia y control total de tus servicios hídricos.</p>
+        <div class="panel-tags">
+          <span>Acceso seguro</span>
+          <span>Datos claros</span>
+          <span>Gestión rápida</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="auth-form">
+      <div class="form-header">
+        <span class="eyebrow">Iniciar sesión</span>
+        <h2>Bienvenido de nuevo</h2>
+        <p>Ingresa tus credenciales para acceder al panel de administración.</p>
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div *ngIf="errorMessage" class="alert error-alert">{{ errorMessage }}</div>
+        <div *ngIf="successMessage" class="alert success-alert">{{ successMessage }}</div>
+
+        <div class="form-group">
+          <label for="documento">Cédula o correo</label>
+          <input id="documento" formControlName="documento" type="text" class="form-control" placeholder="Ej. 12345678 o correo@ejemplo.com" />
+          <span *ngIf="loginForm.get('documento')?.invalid && loginForm.get('documento')?.touched" class="error-msg">Este dato es obligatorio.</span>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Contraseña</label>
+          <div class="password-field">
+            <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password" class="form-control" placeholder="••••••••" />
+            <button type="button" class="password-toggle" (click)="showPassword = !showPassword" aria-label="Mostrar contraseña">
+              {{ showPassword ? 'Ocultar' : 'Mostrar' }}
+            </button>
+          </div>
+          <span *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="error-msg">La contraseña es obligatoria.</span>
+        </div>
+
+        <button type="submit" class="btn-primary-modern w-100" [disabled]="isLoading">
+          <span *ngIf="!isLoading">Iniciar sesión</span>
+          <span *ngIf="isLoading" class="btn-spinner"></span>
+        </button>
+
+        <div class="form-footer">
+          <p>¿No tienes una cuenta? <a routerLink="/auth/registro">Crea una aquí</a></p>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>

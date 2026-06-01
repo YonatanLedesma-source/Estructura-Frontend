@@ -1,0 +1,30 @@
+<div class="admin-wrapper">
+  <h2 class="title-blue">Gestión de Administradores</h2>
+
+  <div class="form-card">
+    <input type="text" [(ngModel)]="adminForm.nombre" placeholder="Nombre completo">
+    <input type="text" [(ngModel)]="adminForm.cedula" placeholder="Cédula">
+    <input type="email" [(ngModel)]="adminForm.correo" placeholder="Correo electrónico">
+    
+    <button (click)="registrar()" class="btn-aqua">Guardar Administrador</button>
+  </div>
+
+  <table class="table-rural">
+    <thead>
+      <tr>
+        <th>Administrador</th>
+        <th>Documento</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let a of listaAdmins">
+        <td>{{ a.nombre }} {{ a.apellido }}</td>
+        <td>{{ a.cedula }}</td>
+        <td>
+          <button (click)="eliminar(a.idAdministrador!)" class="btn-delete">Quitar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,86 @@
+<div class="container py-5">
+  <div class="dashboard-header mb-5">
+    <div>
+      <h2 class="title-main">Historial de Consumo</h2>
+      <p class="text-muted">Visualiza y gestiona los registros hídricos de la vereda.</p>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card">
+        <i class="fas fa-tint"></i>
+        <div class="stat-info">
+          <span class="stat-value">1,250 m³</span>
+          <span class="stat-label">Consumo Total</span>
+        </div>
+      </div>
+      <div class="stat-card accent">
+        <i class="fas fa-users"></i>
+        <div class="stat-info">
+          <span class="stat-value">{{ consumos.length }}</span>
+          <span class="stat-label">Registros</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-form p-4 mb-5 border-0 shadow-sm">
+    <form (ngSubmit)="guardar()">
+      <div class="row">
+        <div class="col-md-3">
+          <label>ID Medidor:</label>
+          <input type="number" [(ngModel)]="nuevoConsumo.idMedidor" name="idMedidor" #idMedidor="ngModel" 
+                 class="form-control" [class.is-invalid]="idMedidor.invalid && idMedidor.touched" required>
+          <div class="error-msg" *ngIf="idMedidor.invalid && idMedidor.touched">Campo requerido</div>
+        </div>
+        <div class="col-md-3">
+          <label>Lectura Actual:</label>
+          <input type="number" [(ngModel)]="nuevoConsumo.lecturaActual" name="lecturaActual" #lectura="ngModel" 
+                 class="form-control" [class.is-invalid]="lectura.invalid && lectura.touched" required>
+          <div class="error-msg" *ngIf="lectura.invalid && lectura.touched">Ingresa la lectura</div>
+        </div>
+        <div class="col-md-3">
+          <label>Periodo:</label>
+          <input type="month" [(ngModel)]="nuevoConsumo.periodo" name="periodo" #periodo="ngModel" 
+                 class="form-control" [class.is-invalid]="periodo.invalid && periodo.touched" required>
+          <div class="error-msg" *ngIf="periodo.invalid && periodo.touched">Selecciona mes</div>
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+          <button type="submit" class="btn btn-success w-100">
+             💾 Registrar Consumo
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table custom-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Medidor</th>
+        <th>Periodo</th>
+        <th>Consumo (m³)</th>
+        <th>Total</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of consumos">
+        <td>{{ item.idConsumo }}</td>
+        <td>{{ item.idMedidor }}</td>
+        <td>{{ item.periodo }}</td>
+        <td>{{ item.metrosConsumidos }}</td>
+        <td>{{ item.valorTotal | currency }}</td>
+        <td class="text-center">
+          <button class="btn-action btn-edit" title="Editar">
+            <i class="fas fa-pen"></i>
+          </button>
+          <button (click)="eliminar(item.idConsumo!)" class="btn-action btn-delete" title="Eliminar">
+            <i class="fas fa-trash"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</div>

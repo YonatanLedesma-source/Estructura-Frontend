@@ -1,0 +1,31 @@
+<div class="lectura-container">
+  <h2 class="title-blue">Registro de Lecturas en Campo</h2>
+
+  <div class="form-lectura">
+    <div class="row">
+      <input type="number" [(ngModel)]="nuevaLectura.idMedidor" placeholder="ID Medidor (Casa)">
+      <input type="number" [(ngModel)]="nuevaLectura.valorLectura" placeholder="Lectura Actual (m³)">
+    </div>
+    <textarea [(ngModel)]="nuevaLectura.observaciones" placeholder="Observaciones (ej: Medidor empañado)"></textarea>
+    <button (click)="registrarLectura()" class="btn-save">Subir Lectura</button>
+  </div>
+
+  <table class="table-rural">
+    <thead>
+      <tr>
+        <th>Fecha</th>
+        <th>Medidor</th>
+        <th>Valor (m³)</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let L of lecturas">
+        <td>{{ L.fechaToma | date:'dd/MM/yyyy' }}</td>
+        <td>#{{ L.idMedidor }}</td>
+        <td>{{ L.valorLectura }} m³</td>
+        <td><span class="badge-ok">Procesada</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
