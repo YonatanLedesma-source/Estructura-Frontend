@@ -1,0 +1,356 @@
+.panel-cliente-container {
+  padding: 2.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 80vh;
+  font-family: 'Inter', sans-serif;
+  color: #1e293b;
+}
+
+// Header
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 1.5rem;
+
+  .badge-role {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    background: rgba(14, 165, 233, 0.1);
+    color: #0284c7;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  h1 {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 0.5rem 0;
+    letter-spacing: -0.025em;
+  }
+
+  .subtitle {
+    color: #64748b;
+    font-size: 1rem;
+    margin: 0;
+  }
+}
+
+.btn-logout {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  padding: 0.65rem 1.25rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: #e2e8f0;
+    color: #0f172a;
+    transform: translateY(-1px);
+  }
+}
+
+// Quick status cards
+.quick-status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.status-card {
+  background: white;
+  border-radius: 1.25rem;
+  border: 1px solid #e2e8f0;
+  padding: 1.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  display: flex;
+  gap: 1.25rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+  }
+
+  &.highlight-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+    border-left: 5px solid #0ea5e9;
+  }
+
+  .card-icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    &.blue-icon {
+      background: rgba(14, 165, 233, 0.1);
+      color: #0ea5e9;
+    }
+
+    &.cyan-icon {
+      background: rgba(6, 182, 212, 0.1);
+      color: #0891b2;
+    }
+
+    svg {
+      width: 1.75rem;
+      height: 1.75rem;
+    }
+  }
+
+  .card-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #64748b;
+      margin: 0 0 0.5rem 0;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .main-value {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0 0 0.25rem 0;
+      line-height: 1;
+    }
+
+    .detail-label {
+      font-size: 0.8rem;
+      color: #94a3b8;
+    }
+  }
+}
+
+.user-data-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+
+  li {
+    color: #334155;
+    strong {
+      color: #64748b;
+      width: 5.5rem;
+      display: inline-block;
+    }
+  }
+}
+
+// Action tiles
+.actions-section {
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 750;
+    color: #0f172a;
+    margin-bottom: 1.5rem;
+  }
+}
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1.5rem;
+}
+
+.action-tile {
+  background: white;
+  border-radius: 1.5rem;
+  border: 1px solid #e2e8f0;
+  padding: 2rem;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
+
+  &:hover {
+    transform: translateY(-4px);
+    border-color: #38bdf8;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+    .tile-link {
+      color: #0284c7;
+      padding-left: 0.5rem;
+    }
+  }
+
+  .tile-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    .tile-icon {
+      font-size: 2rem;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0;
+    }
+  }
+
+  p {
+    font-size: 0.95rem;
+    color: #64748b;
+    line-height: 1.6;
+    margin: 0;
+    flex-grow: 1;
+  }
+
+  .tile-link {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #0ea5e9;
+    transition: all 0.2s ease-in-out;
+  }
+}
+
+// Loaders & Errors
+.loading-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 0;
+
+  .spinner {
+    width: 3.5rem;
+    height: 3.5rem;
+    border: 4px solid #f1f5f9;
+    border-top: 4px solid #0ea5e9;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1.5rem;
+  }
+
+  p {
+    color: #64748b;
+    font-weight: 500;
+  }
+}
+
+.error-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem 0;
+}
+
+.error-card {
+  background: white;
+  border-radius: 1.5rem;
+  border: 1px solid #fecaca;
+  padding: 3rem 2rem;
+  text-align: center;
+  max-width: 500px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+
+  .error-icon {
+    font-size: 3rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #991b1b;
+    margin: 0;
+  }
+
+  p {
+    color: #64748b;
+    font-size: 0.95rem;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .help-text {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    background: #fef2f2;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    border: 1px dashed #fee2e2;
+  }
+
+  .btn-logout {
+    margin-top: 1rem;
+    background-color: #dc2626;
+    color: white;
+    border: none;
+
+    &:hover {
+      background-color: #b91c1c;
+      color: white;
+    }
+  }
+}
+
+// Animations
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.delay-100 {
+  animation-delay: 0.1s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

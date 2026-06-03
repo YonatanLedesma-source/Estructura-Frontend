@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { Cliente} from '../Models/Cliente.model';
 import { environment } from '../../../Environments/environments';
 
@@ -27,36 +27,48 @@ export class ClienteService {
 
     listar(): Observable<Cliente[]> {
         return this.tryBoth(
-            this.http.get<Cliente[]>(this.baseUrlPlural),
-            this.http.get<Cliente[]>(this.baseUrlSingular)
+            this.http.get<any[]>(this.baseUrlPlural),
+            this.http.get<any[]>(this.baseUrlSingular)
+        ).pipe(
+            map(items => items.map(c => this.mapToModel(c)))
         );
     }
 
     obtenerPorId(id: number): Observable<Cliente> {
         return this.tryBoth(
-            this.http.get<Cliente>(`${this.baseUrlPlural}/${id}`),
-            this.http.get<Cliente>(`${this.baseUrlSingular}/${id}`)
+            this.http.get<any>(`${this.baseUrlPlural}/${id}`),
+            this.http.get<any>(`${this.baseUrlSingular}/${id}`)
+        ).pipe(
+            map(item => this.mapToModel(item))
         );
     }
 
     buscarporIdCedula(cedula: string): Observable<Cliente> {
         return this.tryBoth(
-            this.http.get<Cliente>(`${this.baseUrlPlural}/cedula`, { params: { cedula } }),
-            this.http.get<Cliente>(`${this.baseUrlSingular}/cedula`, { params: { cedula } })
+            this.http.get<any>(`${this.baseUrlPlural}/cedula`, { params: { cedula } }),
+            this.http.get<any>(`${this.baseUrlSingular}/cedula`, { params: { cedula } })
+        ).pipe(
+            map(item => this.mapToModel(item))
         );
     }
 
     crear(cliente: Cliente): Observable<Cliente> {
+        const payload = this.mapToBackend(cliente);
         return this.tryBoth(
-            this.http.post<Cliente>(this.baseUrlPlural, cliente),
-            this.http.post<Cliente>(this.baseUrlSingular, cliente)
+            this.http.post<any>(this.baseUrlPlural, payload),
+            this.http.post<any>(this.baseUrlSingular, payload)
+        ).pipe(
+            map(item => this.mapToModel(item))
         );
     }
 
     actualizar(id: number, cliente: Cliente): Observable<Cliente> {
+        const payload = this.mapToBackend(cliente);
         return this.tryBoth(
-            this.http.put<Cliente>(`${this.baseUrlPlural}/${id}`, cliente),
-            this.http.put<Cliente>(`${this.baseUrlSingular}/${id}`, cliente)
+            this.http.put<any>(`${this.baseUrlPlural}/${id}`, payload),
+            this.http.put<any>(`${this.baseUrlSingular}/${id}`, payload)
+        ).pipe(
+            map(item => this.mapToModel(item))
         );
     }
 
@@ -65,6 +77,38 @@ export class ClienteService {
             this.http.delete<void>(`${this.baseUrlPlural}/${id}`),
             this.http.delete<void>(`${this.baseUrlSingular}/${id}`)
         );
+    }
+
+    private mapToModel(item: any): Cliente {
+        if (!item) return {} as Cliente;
+        return {
+            id: item.id_cli || item.id,
+            id_cli: item.id_cli || item.id,
+            nombre: item.nombre || '',
+            email: item.email || '',
+            telefono: item.tel || item.telefono || '',
+            direccion: item.direccion || '',
+            cedula: item.cedula ? item.cedula.toString() : '',
+            estado: item.estado === 1 || item.estado === true,
+            lectura: item.lectura !== undefined ? item.lectura : null,
+            numeroMedidor: item.numeroMedidor !== undefined ? item.numeroMedidor : null
+        };
+    }
+
+    private mapToBackend(model: Cliente): any {
+        return {
+            id_cli: model.id_cli || model.id,
+            nombre: model.nombre,
+            tel: model.telefono || (model as any).tel || '',
+            cedula: model.cedula ? Number(model.cedula) : null,
+            email: model.email,
+            lectura: model.lectura || 0,
+            direccion: model.direccion,
+            estado: model.estado ? 1 : 0,
+            password: (model as any).password || (model.cedula ? model.cedula.toString() : 'Pureza123'),
+            numeroMedidor: model.numeroMedidor || null,
+            rol: (model as any).rol || 'CLIENTE'
+        };
     }
 }
 

@@ -1,121 +1,606 @@
-// Variables de color de Pureza Rural
-$azul-oscuro: #003366;
-$azul-vibrante: #00A8E8;
-$gris-fondo: #F4F7F9;
-$blanco: #ffffff;
-$danger: #e74c3c;
-
-.admin-wrapper {
-  padding: 40px;
-  background-color: $gris-fondo;
-  min-height: 100vh;
-
-  .title-blue {
-    color: $azul-oscuro;
-    font-size: 2rem;
-    font-weight: 800;
-    margin-bottom: 30px;
-    border-left: 6px solid $azul-vibrante;
-    padding-left: 20px;
-    text-transform: uppercase;
-  }
-}
-
-// Estilo del Formulario (Tarjeta)
-.form-card {
-  background: $blanco;
-  padding: 30px;
-  border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0, 51, 102, 0.08);
+// SaaS Layout: Disposición de dos paneles (Sidebar + Contenido)
+.saas-layout {
   display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  margin-bottom: 40px;
+  min-height: calc(100vh - 90px);
+  background-color: #f4f7f9;
+  font-family: 'Outfit', 'Montserrat', 'Inter', sans-serif;
+  overflow-x: hidden;
+}
 
-  input {
-    flex: 1;
-    min-width: 200px;
-    padding: 12px 15px;
-    border: 2px solid #e1e8ed;
-    border-radius: 8px;
-    font-family: 'Open Sans', sans-serif;
-    transition: all 0.3s ease;
+// 1. BARRA LATERAL (SIDEBAR)
+.saas-sidebar {
+  width: 260px;
+  background-color: #001a33; // Deep Navy matching the brand
+  color: #94a3b8; // Slate 400
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid rgba(0, 168, 232, 0.1);
+  position: fixed;
+  top: 90px; // Align below the main website header (90px)
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  padding: 1.5rem;
+  transition: width 0.3s ease, padding 0.3s ease;
 
-    &:focus {
-      outline: none;
-      border-color: $azul-vibrante;
-      box-shadow: 0 0 8px rgba(0, 168, 232, 0.2);
+  .sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, rgba(0, 168, 232, 0.2) 0%, rgba(0, 51, 102, 0.2) 100%);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(0, 168, 232, 0.3);
+
+      i {
+        color: #00a8e8;
+      }
+    }
+
+    .brand-title {
+      font-weight: 700;
+      color: #ffffff;
+      font-size: 1.15rem;
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .brand-tagline {
+      font-size: 0.75rem;
+      color: #00a8e8;
+      opacity: 0.85;
+      font-weight: 600;
     }
   }
 
-  .btn-aqua {
-    background-color: $azul-vibrante;
-    color: $blanco;
-    border: none;
-    padding: 12px 25px;
-    border-radius: 8px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: transform 0.2s, background 0.3s;
+  .sidebar-nav {
+    flex: 1;
 
-    &:hover {
-      background-color: darken($azul-vibrante, 10%);
-      transform: translateY(-2px);
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+
+      li a {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.8rem 1.1rem;
+        border-radius: 12px;
+        color: #94a3b8;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+        i {
+          font-size: 1.1rem;
+          width: 20px;
+          text-align: center;
+        }
+
+        span {
+          font-size: 0.9rem;
+        }
+
+        &:hover {
+          color: #ffffff;
+          background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        &.active {
+          color: #ffffff;
+          background: linear-gradient(135deg, #00a8e8 0%, #003366 100%);
+          box-shadow: 0 4px 15px rgba(0, 168, 232, 0.3);
+        }
+      }
+    }
+  }
+
+  .sidebar-footer {
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+    .admin-profile {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      .avatar-small {
+        width: 36px;
+        height: 36px;
+        background: linear-gradient(135deg, #00a8e8, #003366);
+        color: #ffffff;
+        font-weight: 700;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .profile-info {
+        display: flex;
+        flex-direction: column;
+
+        strong {
+          color: #ffffff;
+          font-size: 0.85rem;
+        }
+
+        small {
+          color: #64748b;
+          font-size: 0.75rem;
+        }
+      }
     }
   }
 }
 
-// Estilo de la Tabla Técnica
-.table-rural {
+// 2. ÁREA DE TRABAJO PRINCIPAL (MAIN)
+.saas-main {
+  margin-left: 260px; // Leave room for Sidebar
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 90px);
+  transition: margin-left 0.3s ease;
+}
+
+// BARRA SUPERIOR (HEADER)
+.saas-header {
+  height: 70px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+  position: relative; // Normal block layout to prevent overlapping content below it
+  z-index: 90;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+
+  .header-title h3 {
+    font-weight: 800;
+    color: #003366;
+    font-size: 1.3rem;
+    font-family: 'Montserrat', sans-serif;
+  }
+}
+
+// CONTENEDOR DE CONTENIDO
+.saas-content {
+  padding: 2rem;
+  flex: 1;
+  max-width: 1200px;
   width: 100%;
+  margin: 0 auto;
+}
+
+// 3. TARJETAS DE MÉTDRICAS (STAT CARDS)
+.stat-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  box-shadow: 0 10px 30px rgba(0, 51, 102, 0.04);
+  border: 1px solid #e2e8f0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 35px rgba(0, 51, 102, 0.08);
+  }
+
+  .stat-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 1.25rem;
+
+    &.bg-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+    &.bg-cyan { background: linear-gradient(135deg, #00a8e8, #003366); }
+    &.bg-green { background: linear-gradient(135deg, #10b981, #047857); }
+    &.bg-orange { background: linear-gradient(135deg, #f97316, #c2410c); }
+  }
+
+  .stat-body {
+    display: flex;
+    flex-direction: column;
+
+    .stat-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #64748b;
+    }
+
+    .stat-number {
+      margin: 0;
+      font-weight: 800;
+      color: #003366;
+      font-size: 1.5rem;
+    }
+  }
+}
+
+// 4. TABLAS DE ACTIVIDAD RECIENTE Y GENERALES (DASHBOARD TABLES)
+.dashboard-table-card {
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 30px rgba(0, 51, 102, 0.04);
+}
+
+.card-header-clean {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #f1f5f9;
+
+  h5 {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #003366;
+  }
+
+  .btn-text-link {
+    background: none;
+    border: none;
+    color: #00a8e8;
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 0;
+    cursor: pointer;
+    
+    &:hover {
+      text-decoration: underline;
+      color: #003366;
+    }
+  }
+}
+
+// TABLAS SAAS CUSTOMIZADAS
+.custom-saas-table {
+  margin-bottom: 0;
   border-collapse: separate;
-  border-spacing: 0 10px; // Espaciado entre filas para efecto moderno
+  border-spacing: 0;
 
   thead th {
-    background-color: $azul-oscuro;
-    color: $blanco;
-    padding: 15px;
-    text-align: left;
-    font-weight: 600;
-    &:first-child { border-radius: 10px 0 0 10px; }
-    &:last-child { border-radius: 0 10px 10px 0; }
+    background-color: rgba(0, 168, 232, 0.04);
+    color: #003366;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid rgba(0, 168, 232, 0.1);
+    padding: 1rem;
+  }
+
+  tbody td {
+    padding: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 0.875rem;
+    color: #334155;
   }
 
   tbody tr {
-    background-color: $blanco;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-    transition: transform 0.2s;
-
+    transition: background-color 0.15s ease;
     &:hover {
-      transform: scale(1.01);
-      background-color: #fcfcfc;
-    }
-
-    td {
-      padding: 15px;
-      color: $azul-oscuro;
-      border-top: 1px solid #f0f0f0;
-      border-bottom: 1px solid #f0f0f0;
-
-      &:first-child { border-left: 1px solid #f0f0f0; border-radius: 10px 0 0 10px; }
-      &:last-child { border-right: 1px solid #f0f0f0; border-radius: 0 10px 10px 0; }
+      background-color: rgba(0, 168, 232, 0.02);
     }
   }
 }
 
-// Botones de acción dentro de la tabla
-.btn-delete {
-  background-color: transparent;
-  color: $danger;
-  border: 1px solid $danger;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 0.85rem;
+// AVATAR SAAS
+.avatar-saas {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, rgba(0, 168, 232, 0.1) 0%, rgba(0, 51, 102, 0.1) 100%);
+  color: #003366;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.95rem;
+  border: 1px solid rgba(0, 168, 232, 0.2);
+}
+
+// BUSCADOR PREMIUM
+.search-bar-premium {
+  position: relative;
+  width: 320px;
+
+  .search-icon {
+    position: absolute;
+    top: 50%;
+    left: 14px;
+    transform: translateY(-50%);
+    color: #94a3b8;
+  }
+
+  input {
+    border-radius: 30px;
+    padding: 0.5rem 1rem 0.5rem 2.5rem;
+    border: 1px solid #cbd5e1;
+    font-size: 0.875rem;
+    
+    &:focus {
+      border-color: #00a8e8;
+      box-shadow: 0 0 0 3px rgba(0, 168, 232, 0.15);
+    }
+  }
+}
+
+// BADGES DE ESTADO PREMIUM
+.badge-status {
+  padding: 0.35rem 0.85rem;
+  border-radius: 30px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: inline-block;
+
+  &.active {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #047857;
+  }
+
+  &.suspended {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #b91c1c;
+  }
+}
+
+// 5. FORMULARIO PREMIUM CENTRADO
+.card-form-premium {
+  background-color: #ffffff;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 650px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 15px 40px rgba(0, 51, 102, 0.06);
+  overflow: hidden;
+
+  .card-form-header {
+    background: linear-gradient(135deg, rgba(0, 168, 232, 0.05) 0%, rgba(0, 51, 102, 0.05) 100%);
+    border-bottom: 1px solid #e2e8f0;
+    padding: 1.75rem 2rem;
+
+    h4 {
+      margin: 0;
+      color: #003366;
+      font-weight: 800;
+      font-family: 'Montserrat', sans-serif;
+    }
+    p {
+      color: #64748b;
+      margin-top: 0.25rem;
+    }
+  }
+
+  .form-label {
+    color: #003366;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .form-control, .form-select {
+    border-radius: 8px;
+    padding: 0.65rem 0.9rem;
+    border-color: #cbd5e1;
+    font-size: 0.95rem;
+    background-color: #fcfcfc;
+    color: #334155;
+    
+    &:focus {
+      border-color: #00a8e8;
+      box-shadow: 0 0 0 3px rgba(0, 168, 232, 0.12);
+      background-color: #ffffff;
+    }
+  }
+}
+
+// 6. EXPEDIENTE 360° DETALLADO
+.profile-header-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 2rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 30px rgba(0, 51, 102, 0.04);
+
+  .avatar-large {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, #00a8e8, #003366);
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 1.75rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+  }
+}
+
+.list-group-item-action {
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.2s ease;
+  font-weight: 700;
+  color: #64748b;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 8px;
+  margin-bottom: 0.25rem;
+  
+  &:hover {
+    background-color: #f1f5f9;
+    color: #00a8e8;
+  }
+
+  &.active {
+    background-color: rgba(0, 168, 232, 0.08) !important;
+    color: #003366 !important;
+    border-left: 4px solid #00a8e8 !important;
+    border-radius: 0 8px 8px 0;
+  }
+}
+
+// BOTONES PREMIUM CON DEGRADADO
+.btn-primary {
+  background: linear-gradient(135deg, #00a8e8 0%, #003366 100%) !important;
+  border: none !important;
+  color: white !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 12px rgba(0, 168, 232, 0.25) !important;
+  transition: all 0.2s ease-in-out !important;
 
   &:hover {
-    background-color: $danger;
-    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(0, 168, 232, 0.35) !important;
+    opacity: 0.95;
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, #ffc107 0%, #ff8f00 100%) !important;
+  border: none !important;
+  color: #001a33 !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.2) !important;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(255, 193, 7, 0.3) !important;
+    opacity: 0.95;
+  }
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  border: none !important;
+  color: white !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2) !important;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(16, 185, 129, 0.3) !important;
+    opacity: 0.95;
+  }
+}
+
+.btn-light {
+  background-color: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #003366 !important;
+  font-weight: 700 !important;
+
+  &:hover {
+    background-color: #e2e8f0 !important;
+  }
+}
+
+.btn-outline-primary {
+  border: 2px solid #00a8e8 !important;
+  color: #00a8e8 !important;
+  font-weight: 700 !important;
+  background-color: transparent !important;
+
+  &:hover {
+    background-color: #00a8e8 !important;
+    color: white !important;
+  }
+}
+
+.btn-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #f1f5f9;
+  }
+
+  &.text-danger:hover {
+    background-color: rgba(239, 68, 68, 0.08);
+  }
+}
+
+// FORM SWITCH PREMIUM
+.form-check-input:checked {
+  background-color: #00a8e8 !important;
+  border-color: #00a8e8 !important;
+}
+
+// ANIMACIÓN DE TRANSICIONES
+.animate-fade-in {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+// RESPONSIVIDAD (Ajustes de Sidebar)
+@media(max-width: 991px) {
+  .saas-sidebar {
+    width: 70px;
+    padding: 1rem 0.5rem;
+    
+    .brand-title, .brand-tagline, .profile-info, span {
+      display: none;
+    }
+    .sidebar-brand, .sidebar-footer {
+      justify-content: center;
+    }
+    .sidebar-nav ul li a {
+      justify-content: center;
+      padding: 0.75rem;
+    }
+  }
+
+  .saas-main {
+    margin-left: 70px;
+  }
+  
+  .saas-header {
+    left: 70px;
   }
 }

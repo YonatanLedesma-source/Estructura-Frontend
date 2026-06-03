@@ -1,30 +1,619 @@
-<div class="admin-wrapper">
-  <h2 class="title-blue">Gestión de Administradores</h2>
+<div class="saas-layout">
+  <!-- 1. Barra de Navegación Lateral (Sidebar) -->
+  <aside class="saas-sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-logo">
+        <i class="fas fa-tint text-primary fa-lg"></i>
+      </div>
+      <div>
+        <h4 class="brand-title">Pureza Rural</h4>
+        <small class="brand-tagline">Acueducto Veredal</small>
+      </div>
+    </div>
 
-  <div class="form-card">
-    <input type="text" [(ngModel)]="adminForm.nombre" placeholder="Nombre completo">
-    <input type="text" [(ngModel)]="adminForm.cedula" placeholder="Cédula">
-    <input type="email" [(ngModel)]="adminForm.correo" placeholder="Correo electrónico">
-    
-    <button (click)="registrar()" class="btn-aqua">Guardar Administrador</button>
-  </div>
+    <nav class="sidebar-nav">
+      <ul>
+        <li>
+          <a (click)="setView('dashboard')" [class.active]="currentView === 'dashboard'">
+            <i class="fas fa-chart-pie"></i>
+            <span>Resumen General</span>
+          </a>
+        </li>
+        <li>
+          <a (click)="setView('clientes')" [class.active]="currentView === 'clientes'">
+            <i class="fas fa-users"></i>
+            <span>Suscriptores</span>
+          </a>
+        </li>
+        <li>
+          <a (click)="abrirCrearCliente()" [class.active]="currentView === 'formulario' && editandoClienteId === null">
+            <i class="fas fa-user-plus"></i>
+            <span>Nuevo Registro</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
 
-  <table class="table-rural">
-    <thead>
-      <tr>
-        <th>Administrador</th>
-        <th>Documento</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let a of listaAdmins">
-        <td>{{ a.nombre }} {{ a.apellido }}</td>
-        <td>{{ a.cedula }}</td>
-        <td>
-          <button (click)="eliminar(a.idAdministrador!)" class="btn-delete">Quitar</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+    <div class="sidebar-footer">
+      <div class="admin-profile">
+        <div class="avatar-small">A</div>
+        <div class="profile-info">
+          <strong>Administrador</strong>
+          <small>Consola de Control</small>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- 2. Área de Trabajo Principal (Main Work Area) -->
+  <main class="saas-main">
+    <!-- Barra Superior de Navegación -->
+    <header class="saas-header">
+      <div class="header-title">
+        <h3 class="mb-0" *ngIf="currentView === 'dashboard'">Resumen de Operación</h3>
+        <h3 class="mb-0" *ngIf="currentView === 'clientes'">Base de Suscriptores</h3>
+        <h3 class="mb-0" *ngIf="currentView === 'formulario'">{{ editandoClienteId ? 'Modificar Registro' : 'Alta de Nuevo Cliente' }}</h3>
+        <h3 class="mb-0" *ngIf="currentView === 'detalles'">Expediente de Cliente</h3>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-outline-primary btn-sm rounded-pill" *ngIf="currentView !== 'dashboard'" (click)="setView('dashboard')">
+          <i class="fas fa-arrow-left me-1"></i> <span>Volver al Panel</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Contenedor del Espacio de Trabajo -->
+    <div class="saas-content">
+      
+      <!-- Alertas de Éxito / Error -->
+      <div *ngIf="mensaje" class="alert alert-success border-0 shadow-sm d-flex align-items-center justify-content-between animate-fade-in mb-4" role="alert">
+        <div><i class="fas fa-check-circle me-2"></i>{{ mensaje }}</div>
+        <button type="button" class="btn-close" (click)="cerrarMensajes()" aria-label="Close"></button>
+      </div>
+      <div *ngIf="error" class="alert alert-danger border-0 shadow-sm d-flex align-items-center justify-content-between animate-fade-in mb-4" role="alert">
+        <div><i class="fas fa-exclamation-circle me-2"></i>{{ error }}</div>
+        <button type="button" class="btn-close" (click)="cerrarMensajes()" aria-label="Close"></button>
+      </div>
+
+      <!-- ============================================= -->
+      <!-- VISTA: DASHBOARD (RESUMEN GENERAL)            -->
+      <!-- ============================================= -->
+      <div *ngIf="currentView === 'dashboard'" class="animate-fade-in">
+        <!-- Tarjetas de Métricas -->
+        <div class="row g-4 mb-4">
+          <div class="col-xl-3 col-sm-6">
+            <div class="stat-card">
+              <div class="stat-icon bg-blue"><i class="fas fa-users"></i></div>
+              <div class="stat-body">
+                <span class="stat-title text-muted">Suscriptores Totales</span>
+                <h3 class="stat-number">{{ clientes.length }}</h3>
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-3 col-sm-6">
+            <div class="stat-card">
+              <div class="stat-icon bg-cyan"><i class="fas fa-tint"></i></div>
+              <div class="stat-body">
+                <span class="stat-title text-muted">Consumo Total</span>
+                <h3 class="stat-number">{{ getConsumoGlobal() | number:'1.0-0' }} m³</h3>
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-3 col-sm-6">
+            <div class="stat-card">
+              <div class="stat-icon bg-green"><i class="fas fa-wallet"></i></div>
+              <div class="stat-body">
+                <span class="stat-title text-muted">Recaudado (Caja)</span>
+                <h3 class="stat-number">{{ getRecaudacionGlobal() | currency:'COP':'symbol-narrow':'1.0-0' }}</h3>
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-3 col-sm-6">
+            <div class="stat-card">
+              <div class="stat-icon bg-orange"><i class="fas fa-file-invoice-dollar"></i></div>
+              <div class="stat-body">
+                <span class="stat-title text-muted">Financiaciones</span>
+                <h3 class="stat-number">{{ getFinanciacionesPendientes() | currency:'COP':'symbol-narrow':'1.0-0' }}</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Secciones de Actividad Reciente -->
+        <div class="row g-4">
+          <!-- Columna: Últimas Lecturas de Agua -->
+          <div class="col-lg-6">
+            <div class="dashboard-table-card card-shadow">
+              <div class="card-header-clean">
+                <h5 class="mb-0 text-dark font-weight-bold"><i class="fas fa-tint text-primary me-2"></i> Lecturas Recientes</h5>
+                <button class="btn-text-link" (click)="setView('clientes')">Ver todos</button>
+              </div>
+              <div class="table-responsive">
+                <table class="table align-middle">
+                  <thead>
+                    <tr>
+                      <th>Cliente</th>
+                      <th>Periodo</th>
+                      <th class="text-end">Consumo</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of consumosGlobales.slice(0, 5)">
+                      <td>
+                        <strong class="d-block font-size-sm text-dark">{{ item.cliente?.nombre || 'Cliente Veredal' }}</strong>
+                        <small class="text-muted font-size-xs">Cédula: {{ item.cliente?.cedula }}</small>
+                      </td>
+                      <td>{{ item.periodo }}</td>
+                      <td class="text-end text-primary font-weight-bold">{{ item.metrosConsumidos }} m³</td>
+                    </tr>
+                    <tr *ngIf="consumosGlobales.length === 0">
+                      <td colspan="3" class="text-center py-4 text-muted small">No hay consumos registrados.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Columna: Últimos Pagos Registrados -->
+          <div class="col-lg-6">
+            <div class="dashboard-table-card card-shadow">
+              <div class="card-header-clean">
+                <h5 class="mb-0 text-dark font-weight-bold"><i class="fas fa-receipt text-success me-2"></i> Últimos Pagos</h5>
+                <button class="btn-text-link" (click)="setView('clientes')">Ver todos</button>
+              </div>
+              <div class="table-responsive">
+                <table class="table align-middle">
+                  <thead>
+                    <tr>
+                      <th>Cliente</th>
+                      <th>Método</th>
+                      <th class="text-end">Monto</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of pagosGlobales.slice(0, 5)">
+                      <td>
+                        <strong class="d-block font-size-sm text-dark">{{ item.cliente?.nombre || 'Cliente Veredal' }}</strong>
+                        <small class="text-muted font-size-xs">Cédula: {{ item.cliente?.cedula }}</small>
+                      </td>
+                      <td><span class="badge bg-secondary-light text-secondary">{{ item.metodoPago }}</span></td>
+                      <td class="text-end text-success font-weight-bold">{{ item.monto | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
+                    </tr>
+                    <tr *ngIf="pagosGlobales.length === 0">
+                      <td colspan="3" class="text-center py-4 text-muted small">No hay pagos registrados.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================= -->
+      <!-- VISTA: LISTADO DE CLIENTES (CRUD PRINCIPAL)    -->
+      <!-- ============================================= -->
+      <div *ngIf="currentView === 'clientes'" class="animate-fade-in">
+        <div class="dashboard-table-card card-shadow p-4">
+          <!-- Filtro de Búsqueda y Registro -->
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+            <div class="search-bar-premium">
+              <i class="fas fa-search search-icon"></i>
+              <input type="text" [(ngModel)]="filtroBusqueda" (keyup)="filtrarClientes()" 
+                     placeholder="Buscar suscriptor por nombre o cédula..." class="form-control">
+            </div>
+            <button class="btn btn-primary px-4 rounded-pill" (click)="abrirCrearCliente()">
+              <i class="fas fa-plus me-2"></i> Registrar Cliente
+            </button>
+          </div>
+
+          <!-- Spinner de Carga -->
+          <div *ngIf="cargando" class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Cargando...</span>
+            </div>
+            <p class="text-muted mt-2 small">Accediendo a la base de datos...</p>
+          </div>
+
+          <!-- Tabla de Clientes -->
+          <div *ngIf="!cargando" class="table-responsive">
+            <table class="table table-hover align-middle custom-saas-table">
+              <thead>
+                <tr>
+                  <th>Nombre y Datos</th>
+                  <th>Cédula</th>
+                  <th>Celular</th>
+                  <th>Número Medidor</th>
+                  <th>Estado del Servicio</th>
+                  <th class="text-end">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let c of clientesFiltrados">
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <div class="avatar-saas me-3">
+                        {{ c.nombre.charAt(0).toUpperCase() }}
+                      </div>
+                      <div>
+                        <strong class="d-block text-dark font-size-sm">{{ c.nombre }}</strong>
+                        <span class="text-muted font-size-xs">{{ c.email }}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>{{ c.cedula }}</td>
+                  <td>{{ c.telefono }}</td>
+                  <td>
+                    <span class="badge bg-secondary-light text-secondary">
+                      {{ c.numeroMedidor ? c.numeroMedidor : 'Sin asignar' }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="badge-status" [class.active]="c.estado" [class.suspended]="!c.estado">
+                      {{ c.estado ? 'Activo' : 'Suspendido' }}
+                    </span>
+                  </td>
+                  <td class="text-end">
+                    <div class="d-flex justify-content-end gap-1">
+                      <button class="btn btn-sm btn-light text-primary font-weight-bold px-3 rounded-pill" (click)="seleccionarCliente(c)">
+                        <i class="fas fa-eye me-1"></i> Expediente
+                      </button>
+                      <button class="btn btn-sm btn-icon text-muted" (click)="abrirEditarCliente(c)" title="Editar">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                      <button class="btn btn-sm btn-icon text-danger" (click)="eliminarCliente(c)" title="Eliminar">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr *ngIf="clientesFiltrados.length === 0">
+                  <td colspan="6" class="text-center py-5 text-muted">No se encontraron clientes registrados con ese criterio.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================= -->
+      <!-- VISTA: FORMULARIO CREAR / EDITAR CLIENTE       -->
+      <!-- ============================================= -->
+      <div *ngIf="currentView === 'formulario'" class="animate-fade-in d-flex justify-content-center">
+        <div class="card-form-premium card-shadow">
+          <div class="card-form-header">
+            <h4 class="mb-1 text-dark font-weight-bold">{{ editandoClienteId ? 'Actualizar Ficha de Cliente' : 'Registrar Nuevo Suscriptor' }}</h4>
+            <p class="text-muted small mb-0">Llena la información a continuación para guardarla en el sistema veredal.</p>
+          </div>
+
+          <form [formGroup]="clienteForm" (ngSubmit)="guardarCliente()" class="p-4">
+            <div class="mb-3">
+              <label class="form-label text-dark font-weight-semibold">Nombre Completo</label>
+              <input type="text" formControlName="nombre" class="form-control" placeholder="Ej. Rodrigo Chavez">
+              <div class="text-danger small mt-1" *ngIf="clienteForm.get('nombre')?.touched && clienteForm.get('nombre')?.invalid">El nombre es requerido</div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label text-dark font-weight-semibold">Cédula</label>
+                <input type="text" formControlName="cedula" class="form-control" placeholder="Ej. 87654111">
+                <div class="text-danger small mt-1" *ngIf="clienteForm.get('cedula')?.touched && clienteForm.get('cedula')?.invalid">Cédula requerida (solo números enteros)</div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label text-dark font-weight-semibold">Número Celular</label>
+                <input type="text" formControlName="telefono" class="form-control" placeholder="Ej. 3205110921">
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label text-dark font-weight-semibold">Correo Electrónico</label>
+              <input type="email" formControlName="email" class="form-control" placeholder="Ej. rocha@gmail.com">
+              <div class="text-danger small mt-1" *ngIf="clienteForm.get('email')?.touched && clienteForm.get('email')?.invalid">Ingresa un formato de correo válido</div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label text-dark font-weight-semibold">Dirección</label>
+              <input type="text" formControlName="direccion" class="form-control" placeholder="Ej. Barrio Corosales, Sector Alto">
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label text-dark font-weight-semibold">Número de Medidor asignado</label>
+                <input type="number" formControlName="numeroMedidor" class="form-control" placeholder="Ej. 1239">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label text-dark font-weight-semibold">Lectura Inicial (m³)</label>
+                <input type="number" formControlName="lectura" class="form-control">
+              </div>
+            </div>
+
+            <div class="mb-4 form-check form-switch p-0 d-flex align-items-center gap-2">
+              <input type="checkbox" formControlName="estado" class="form-check-input ms-0" id="switchEstado">
+              <label class="form-check-label text-dark small" for="switchEstado">Habilitar servicio de agua activo</label>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+              <button type="button" class="btn btn-light rounded-pill px-4" (click)="setView('clientes')">Cancelar</button>
+              <button type="submit" class="btn btn-primary rounded-pill px-4">{{ editandoClienteId ? 'Guardar Cambios' : 'Registrar Cliente' }}</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- ============================================= -->
+      <!-- VISTA: EXPEDIENTE 360° DEL CLIENTE             -->
+      <!-- ============================================= -->
+      <div *ngIf="currentView === 'detalles' && clienteSeleccionado" class="animate-fade-in">
+        <!-- Encabezado del Perfil -->
+        <div class="profile-header-card card-shadow mb-4">
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div class="d-flex align-items-center">
+              <div class="avatar-large me-4">
+                {{ clienteSeleccionado.nombre.charAt(0).toUpperCase() }}
+              </div>
+              <div>
+                <div class="d-flex align-items-center gap-2 mb-1">
+                  <h3 class="mb-0 text-dark font-weight-bold">{{ clienteSeleccionado.nombre }}</h3>
+                  <span class="badge-status" [class.active]="clienteSeleccionado.estado" [class.suspended]="!clienteSeleccionado.estado">
+                    {{ clienteSeleccionado.estado ? 'Servicio Activo' : 'Suspendido' }}
+                  </span>
+                </div>
+                <p class="text-muted mb-0 small">
+                  Cédula: <strong>{{ clienteSeleccionado.cedula }}</strong> | 
+                  Dirección: <strong>{{ clienteSeleccionado.direccion }}</strong> | 
+                  Medidor: <strong>{{ clienteSeleccionado.numeroMedidor || 'No asignado' }}</strong>
+                </p>
+              </div>
+            </div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-outline-secondary px-3 rounded-pill" (click)="abrirEditarCliente(clienteSeleccionado)">
+                <i class="fas fa-edit me-1"></i> Editar
+              </button>
+              <button class="btn btn-outline-danger px-3 rounded-pill" (click)="eliminarCliente(clienteSeleccionado)">
+                <i class="fas fa-trash me-1"></i> Eliminar
+              </button>
+              <button class="btn btn-light px-3 rounded-pill" (click)="setView('clientes')">
+                Volver a la lista
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ficha de Datos Técnicos y Pestañas Detalladas -->
+        <div class="row g-4">
+          <!-- Columna Izquierda: Información Rápida -->
+          <div class="col-lg-4">
+            <div class="card card-shadow border-0 p-4 mb-4">
+              <h5 class="font-weight-bold text-dark mb-3">Información de Contacto</h5>
+              <ul class="list-unstyled mb-0">
+                <li class="mb-3 d-flex justify-content-between border-bottom pb-2">
+                  <span class="text-muted">Celular:</span>
+                  <strong class="text-dark">{{ clienteSeleccionado.telefono }}</strong>
+                </li>
+                <li class="mb-3 d-flex justify-content-between border-bottom pb-2">
+                  <span class="text-muted">Correo:</span>
+                  <strong class="text-dark">{{ clienteSeleccionado.email }}</strong>
+                </li>
+                <li class="mb-3 d-flex justify-content-between border-bottom pb-2">
+                  <span class="text-muted">Dirección:</span>
+                  <strong class="text-dark text-end">{{ clienteSeleccionado.direccion }}</strong>
+                </li>
+                <li class="d-flex justify-content-between">
+                  <span class="text-muted">Lectura Actual:</span>
+                  <strong class="text-primary">{{ clienteSeleccionado.lectura || 0 }} m³</strong>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Navegación de Pestañas del Expediente -->
+            <div class="card card-shadow border-0 p-0 overflow-hidden">
+              <div class="list-group list-group-flush">
+                <button class="list-group-item list-group-item-action border-0 py-3 px-4 d-flex align-items-center justify-content-between"
+                        [class.active]="pestanaDetalleActiva === 'consumos'" (click)="pestanaDetalleActiva = 'consumos'">
+                  <span><i class="fas fa-chart-line me-2"></i>Lecturas de Consumo</span>
+                  <i class="fas fa-chevron-right text-muted small"></i>
+                </button>
+                <button class="list-group-item list-group-item-action border-0 py-3 px-4 d-flex align-items-center justify-content-between"
+                        [class.active]="pestanaDetalleActiva === 'pagos'" (click)="pestanaDetalleActiva = 'pagos'">
+                  <span><i class="fas fa-receipt me-2"></i>Historial de Pagos</span>
+                  <i class="fas fa-chevron-right text-muted small"></i>
+                </button>
+                <button class="list-group-item list-group-item-action border-0 py-3 px-4 d-flex align-items-center justify-content-between"
+                        [class.active]="pestanaDetalleActiva === 'finan'" (click)="pestanaDetalleActiva = 'finan'">
+                  <span><i class="fas fa-file-invoice-dollar me-2"></i>Convenios de Financiación</span>
+                  <i class="fas fa-chevron-right text-muted small"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Vista del Expediente y Operación Rápida -->
+          <div class="col-lg-8">
+            <div class="card card-shadow border-0 p-4">
+              <!-- SECCIÓN: CONSUMOS -->
+              <div *ngIf="pestanaDetalleActiva === 'consumos'" class="animate-fade-in">
+                <h5 class="font-weight-bold text-dark mb-3"><i class="fas fa-chart-bar text-primary me-2"></i>Lecturas de Consumo</h5>
+                
+                <!-- Historial -->
+                <div class="table-responsive mb-4" style="max-height: 250px; overflow-y: auto;">
+                  <table class="table align-middle custom-saas-table table-sm">
+                    <thead>
+                      <tr>
+                        <th>Periodo</th>
+                        <th>Fecha Lectura</th>
+                        <th>Consumo</th>
+                        <th class="text-end">Total Facturado</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of consumosCliente">
+                        <td><strong>{{ item.periodo }}</strong></td>
+                        <td>{{ item.fechaLectura | date:'dd/MM/yyyy' }}</td>
+                        <td>{{ item.metrosConsumidos }} m³</td>
+                        <td class="text-end text-primary font-weight-bold">{{ item.valorTotal | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
+                      </tr>
+                      <tr *ngIf="consumosCliente.length === 0">
+                        <td colspan="4" class="text-center py-4 text-muted small">No hay consumos registrados.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Formulario -->
+                <div class="p-4 bg-light rounded-4 border">
+                  <h6 class="font-weight-bold text-dark mb-3"><i class="fas fa-plus text-primary me-1"></i> Registrar Consumo de Agua</h6>
+                  <form [formGroup]="lecturaForm" (ngSubmit)="agregarLectura()">
+                    <div class="row g-3">
+                      <div class="col-md-4">
+                        <label class="form-label small font-weight-semibold">Periodo (Mes/Año)</label>
+                        <input type="month" formControlName="periodo" class="form-control form-control-sm">
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label small font-weight-semibold">Metros Cúbicos (m³)</label>
+                        <input type="number" formControlName="metrosConsumidos" class="form-control form-control-sm">
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label small font-weight-semibold">Total a Cobrar</label>
+                        <input type="number" formControlName="valorTotal" class="form-control form-control-sm" placeholder="Ej. 18000">
+                      </div>
+                      <div class="col-12 text-end mt-3">
+                        <button type="submit" class="btn btn-primary btn-sm px-4 rounded-pill" [disabled]="lecturaForm.invalid">
+                          Guardar Lectura
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              <!-- SECCIÓN: PAGOS -->
+              <div *ngIf="pestanaDetalleActiva === 'pagos'" class="animate-fade-in">
+                <h5 class="font-weight-bold text-dark mb-3"><i class="fas fa-receipt text-success me-2"></i>Historial de Pagos</h5>
+                
+                <!-- Historial -->
+                <div class="table-responsive mb-4" style="max-height: 250px; overflow-y: auto;">
+                  <table class="table align-middle custom-saas-table table-sm">
+                    <thead>
+                      <tr>
+                        <th>Fecha de Pago</th>
+                        <th>Método</th>
+                        <th>Estado</th>
+                        <th class="text-end">Monto Cobrado</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of pagosCliente">
+                        <td>{{ item.fechaPago | date:'dd/MM/yyyy' }}</td>
+                        <td><span class="badge bg-light text-dark">{{ item.metodoPago }}</span></td>
+                        <td>
+                          <span class="badge-status" [class.active]="item.estado === 1" [class.suspended]="item.estado === 0">
+                            {{ item.estado === 1 ? 'Aprobado' : 'Pendiente' }}
+                          </span>
+                        </td>
+                        <td class="text-end text-success font-weight-bold font-monospace">{{ item.monto | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
+                      </tr>
+                      <tr *ngIf="pagosCliente.length === 0">
+                        <td colspan="4" class="text-center py-4 text-muted small">No hay recibos de pago.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Formulario -->
+                <div class="p-4 bg-light rounded-4 border">
+                  <h6 class="font-weight-bold text-dark mb-3"><i class="fas fa-plus text-success me-1"></i> Registrar Recibo de Caja</h6>
+                  <form [formGroup]="pagoForm" (ngSubmit)="agregarPago()">
+                    <div class="row g-3">
+                      <div class="col-md-6">
+                        <label class="form-label small font-weight-semibold">Monto Pagado ($)</label>
+                        <input type="number" formControlName="monto" class="form-control form-control-sm">
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label small font-weight-semibold">Medio de Pago</label>
+                        <select formControlName="metodoPago" class="form-select form-select-sm">
+                          <option value="PSE">PSE / Pago Digital</option>
+                          <option value="Efectivo">Efectivo / Caja Veredal</option>
+                          <option value="Transferencia">Transferencia Bancaria</option>
+                        </select>
+                      </div>
+                      <div class="col-12 text-end mt-3">
+                        <button type="submit" class="btn btn-success btn-sm px-4 rounded-pill" [disabled]="pagoForm.invalid">
+                          Registrar Pago
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              <!-- SECCIÓN: FINANCIACIÓN -->
+              <div *ngIf="pestanaDetalleActiva === 'finan'" class="animate-fade-in">
+                <h5 class="font-weight-bold text-dark mb-3"><i class="fas fa-file-invoice-dollar text-warning me-2"></i>Convenios de Financiación</h5>
+                
+                <!-- Historial -->
+                <div class="table-responsive mb-4" style="max-height: 250px; overflow-y: auto;">
+                  <table class="table align-middle custom-saas-table table-sm">
+                    <thead>
+                      <tr>
+                        <th>Concepto</th>
+                        <th>Cuotas</th>
+                        <th>Valor Cuota</th>
+                        <th class="text-end">Deuda Pendiente</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of financiacionesCliente">
+                        <td><strong>{{ item.concepto }}</strong></td>
+                        <td>{{ getNumeroCuotas(item) }} cuotas</td>
+                        <td>{{ getCuotaMensual(item) | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
+                        <td class="text-end text-danger font-weight-bold font-monospace">
+                          {{ getSaldoPendiente(item) | currency:'COP':'symbol-narrow':'1.0-0' }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="financiacionesCliente.length === 0">
+                        <td colspan="4" class="text-center py-4 text-muted small">Sin financiaciones activas.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Formulario -->
+                <div class="p-4 bg-light rounded-4 border">
+                  <h6 class="font-weight-bold text-dark mb-3"><i class="fas fa-plus text-warning me-1"></i> Generar Acuerdo de Financiación</h6>
+                  <form [formGroup]="finanForm" (ngSubmit)="agregarFinanciacion()">
+                    <div class="row g-3">
+                      <div class="col-12">
+                        <label class="form-label small font-weight-semibold">Concepto del Acuerdo</label>
+                        <input type="text" formControlName="concepto" class="form-control form-control-sm" placeholder="Ej. Financiación Acometida Hídrica">
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label small font-weight-semibold">Monto Acordado ($)</label>
+                        <input type="number" formControlName="montoTotal" class="form-control form-control-sm"
+                               (input)="finanForm.patchValue({saldoPendiente: finanForm.get('montoTotal')?.value})">
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label small font-weight-semibold">Número Cuotas</label>
+                        <input type="number" formControlName="numeroCuotas" class="form-control form-control-sm">
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label small font-weight-semibold">Cuota Mensual</label>
+                        <input type="number" formControlName="cuotaMensual" class="form-control form-control-sm">
+                      </div>
+                      <div class="col-12 text-end mt-3">
+                        <button type="submit" class="btn btn-warning text-dark btn-sm px-4 rounded-pill" [disabled]="finanForm.invalid">
+                          Habilitar Acuerdo
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
 </div>

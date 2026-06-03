@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterModule } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../../core/Services/Auth.service';
+import { TokenService } from '../../../core/Services/Token.service';
 
 @Component({
   selector: 'app-login',
@@ -24,6 +25,7 @@ export class LoginComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
+    private tokenService: TokenService,
     private router: Router
   ) {
     // Formulario de login
@@ -61,17 +63,24 @@ export class LoginComponent {
         this.authService.login(credentials)
       );
 
-      // Guardar token si viene en la respuesta
+      // Guardar token en localStorage a través del TokenService
       if (user.token) {
-        this.authService.saveToken(user.token);
+        this.tokenService.saveToken(user.token);
       }
 
-      // Redirección según rol
-      const role = user.rol?.toUpperCase();
-      if (role === 'BENEFICIARIO' || role === 'CLIENTE') {
-        this.router.navigate(['/']);
+      // Redirección precisa y segura basada en el rol de la respuesta o del token JWT decodificado
+      const role = (user.rol || this.tokenService.getUserRole())?.toUpperCase();
+      
+      if (role === 'ADMINISTRADOR' || role === 'ADMIN') {
+        this.router.navigate(['/administradores']);
+      } else if (role === 'OPERADOR' || role === 'OPERATOR') {
+        this.router.navigate(['/operador']);
+      } else if (role === 'CLIENTE' || role === 'BENEFICIARIO') {
+        this.router.navigate(['/mi-panel']);
+      } else if (role === 'PRESIDENTE') {
+        this.router.navigate(['/presidente']);
       } else {
-        this.router.navigate(['/panel-control']);
+        this.router.navigate(['/']);
       }
     } catch (error: any) {
       this.errorMessage = this.extractError(error);

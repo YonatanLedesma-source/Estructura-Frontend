@@ -5,4 +5,7 @@ export interface HistorialConsumo {
     periodo: string;
     metrosConsumidos?: number;
     valorTotal?: number;
+    cliente?: any;
+    id_cli?: number;
+    fechaLectura?: string;
 }
