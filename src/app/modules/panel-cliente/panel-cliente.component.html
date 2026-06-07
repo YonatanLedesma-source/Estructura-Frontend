@@ -85,7 +85,59 @@
         </a>
       </div>
     </div>
+
+    <!-- Sección de Facturas Emitidas -->
+    <div class="invoices-section animate-slide-up delay-200">
+      <div class="section-header">
+        <h2>Mis Facturas de Servicio</h2>
+        <p>Descarga la factura del mes actual y meses anteriores en formato PDF para tus registros.</p>
+      </div>
+
+      <div class="invoices-card">
+        <div class="table-responsive">
+          <table class="invoices-table">
+            <thead>
+              <tr>
+                <th>Factura</th>
+                <th>Periodo</th>
+                <th>Fecha de Emisión</th>
+                <th>Consumo</th>
+                <th>Total a Pagar</th>
+                <th>Estado</th>
+                <th class="text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let fac of facturas">
+                <td>
+                  <strong class="invoice-number">{{ fac.numero }}</strong>
+                </td>
+                <td>{{ fac.periodo }}</td>
+                <td>{{ fac.fechaEmision | date:'dd/MM/yyyy' }}</td>
+                <td>{{ fac.historialConsumo?.metrosConsumidos || 0 }} m³</td>
+                <td class="invoice-amount">{{ fac.totalPagar | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
+                <td>
+                  <span class="badge-status" [class.active]="fac.estado === 1" [class.suspended]="fac.estado === 0">
+                    {{ fac.estado === 1 ? 'Pagada' : 'Pendiente' }}
+                  </span>
+                </td>
+                <td class="text-center">
+                  <button class="btn-download" (click)="descargarPDF(fac)" title="Descargar PDF">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    Descargar
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="facturas.length === 0">
+                <td colspan="7" class="empty-state">No tienes facturas emitidas registradas en el sistema.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
+
 
   <!-- Vista de Error -->
   <div *ngIf="!cargando && error" class="error-container animate-fade-in">

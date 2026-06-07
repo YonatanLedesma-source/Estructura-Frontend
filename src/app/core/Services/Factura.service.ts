@@ -3,19 +3,8 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../Environments/environments';
-
-export interface Factura {
-  id_fac?: number;
-  numero: string;
-  periodo: string;
-  fechaEmision?: string;
-  estado: number; // 0 = Pendiente, 1 = Pagado
-  zona?: string;
-  totalCuotas?: number;
-  totalPagar?: number;
-  id_cli?: number;
-  cliente?: any;
-}
+import { Factura } from '../Models/Factura.model';
+export { Factura };
 
 @Injectable({ providedIn: 'root' })
 export class FacturaService {
@@ -64,7 +53,9 @@ export class FacturaService {
             totalCuotas: item.totalCuotas || 0,
             totalPagar: item.totalPagar || 0,
             cliente: item.cliente,
-            id_cli: item.cliente ? item.cliente.id_cli : null
+            id_cli: item.cliente ? item.cliente.id_cli : null,
+            historialConsumo: item.historialConsumo,
+            lectura: item.lectura
         };
     }
 
@@ -78,7 +69,9 @@ export class FacturaService {
             zona: model.zona,
             totalCuotas: model.totalCuotas,
             totalPagar: model.totalPagar,
-            cliente: model.cliente ? model.cliente : (model.id_cli ? { id_cli: model.id_cli } : null)
+            cliente: model.cliente ? model.cliente : (model.id_cli ? { id_cli: model.id_cli } : null),
+            historialConsumo: model.historialConsumo,
+            lectura: model.lectura
         };
     }
 }

@@ -31,6 +31,12 @@
             <span>Nuevo Registro</span>
           </a>
         </li>
+        <li>
+          <a (click)="setView('facturas')" [class.active]="currentView === 'facturas' || currentView === 'crear-factura'">
+            <i class="fas fa-file-invoice"></i>
+            <span>Facturas</span>
+          </a>
+        </li>
       </ul>
     </nav>
 
@@ -54,6 +60,8 @@
         <h3 class="mb-0" *ngIf="currentView === 'clientes'">Base de Suscriptores</h3>
         <h3 class="mb-0" *ngIf="currentView === 'formulario'">{{ editandoClienteId ? 'Modificar Registro' : 'Alta de Nuevo Cliente' }}</h3>
         <h3 class="mb-0" *ngIf="currentView === 'detalles'">Expediente de Cliente</h3>
+        <h3 class="mb-0" *ngIf="currentView === 'facturas'">Facturación</h3>
+        <h3 class="mb-0" *ngIf="currentView === 'crear-factura'">Generar Nueva Factura</h3>
       </div>
       <div class="header-actions">
         <button class="btn btn-outline-primary btn-sm rounded-pill" *ngIf="currentView !== 'dashboard'" (click)="setView('dashboard')">
@@ -611,6 +619,154 @@
               </div>
             </div>
           </div>
+        </div>
+
+      </div>
+
+      <!-- ============================================= -->
+      <!-- VISTA: LISTADO DE FACTURAS                   -->
+      <!-- ============================================= -->
+      <div *ngIf="currentView === 'facturas'" class="animate-fade-in">
+        <div class="dashboard-table-card card-shadow p-4">
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+            <h5 class="mb-0 text-dark font-weight-bold"><i class="fas fa-file-invoice text-primary me-2"></i>Historial de Facturas</h5>
+            <button class="btn btn-primary px-4 rounded-pill" (click)="abrirCrearFactura()">
+              <i class="fas fa-plus me-2"></i> Generar Factura
+            </button>
+          </div>
+
+          <!-- Spinner de Carga -->
+          <div *ngIf="cargando" class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Cargando...</span>
+            </div>
+          </div>
+
+          <!-- Tabla de Facturas -->
+          <div *ngIf="!cargando" class="table-responsive">
+            <table class="table table-hover align-middle custom-saas-table">
+              <thead>
+                <tr>
+                  <th>Factura Nº</th>
+                  <th>Suscriptor</th>
+                  <th>Periodo</th>
+                  <th>Consumo</th>
+                  <th>Total Cobrado</th>
+                  <th>Estado</th>
+                  <th class="text-end">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let fac of facturasGlobales">
+                  <td>
+                    <strong class="text-dark font-size-sm">{{ fac.numero }}</strong>
+                    <span class="d-block text-muted font-size-xs">Emitida: {{ fac.fechaEmision | date:'dd/MM/yyyy' }}</span>
+                  </td>
+                  <td>
+                    <strong class="d-block text-dark font-size-sm">{{ fac.cliente?.nombre || 'Suscriptor' }}</strong>
+                    <span class="text-muted font-size-xs">Cédula: {{ fac.cliente?.cedula }}</span>
+                  </td>
+                  <td>{{ fac.periodo }}</td>
+                  <td>
+                    <span class="badge bg-secondary-light text-secondary">
+                      {{ fac.historialConsumo?.metrosConsumidos || 0 }} m³
+                    </span>
+                  </td>
+                  <td class="text-primary font-weight-bold font-monospace">{{ fac.totalPagar | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
+                  <td>
+                    <span class="badge-status" [class.active]="fac.estado === 1" [class.suspended]="fac.estado === 0">
+                      {{ fac.estado === 1 ? 'Pagada' : 'Pendiente' }}
+                    </span>
+                  </td>
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-icon text-danger" (click)="eliminarFactura(fac.id_fac)" title="Eliminar Factura">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="facturasGlobales.length === 0">
+                  <td colspan="7" class="text-center py-5 text-muted">No se han emitido facturas en el sistema.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================= -->
+      <!-- VISTA: FORMULARIO GENERAR FACTURA             -->
+      <!-- ============================================= -->
+      <div *ngIf="currentView === 'crear-factura'" class="animate-fade-in d-flex justify-content-center">
+        <div class="card-form-premium card-shadow" style="max-width: 600px; width: 100%;">
+          <div class="card-form-header bg-primary text-white p-4 rounded-top-4">
+            <h4 class="mb-1 font-weight-bold text-white"><i class="fas fa-calculator me-2"></i>Cálculo de Factura de Agua</h4>
+            <p class="text-white-50 small mb-0">Seleccione el suscriptor e ingrese la lectura del medidor actual para calcular el consumo.</p>
+          </div>
+
+          <form [formGroup]="facturaForm" (ngSubmit)="guardarFactura()" class="p-4">
+            <!-- Selector de Cliente -->
+            <div class="mb-3">
+              <label class="form-label text-dark font-weight-semibold">Suscriptor Veredal</label>
+              <select formControlName="id_cli" class="form-select">
+                <option [ngValue]="null" disabled selected>Seleccione un suscriptor...</option>
+                <option *ngFor="let c of clientes" [value]="c.id_cli || c.id">
+                  {{ c.nombre }} (Cédula: {{ c.cedula }} - Medidor: {{ c.numeroMedidor }})
+                </option>
+              </select>
+              <div class="text-danger small mt-1" *ngIf="facturaForm.get('id_cli')?.touched && facturaForm.get('id_cli')?.invalid">Debe seleccionar un cliente</div>
+            </div>
+
+            <!-- Periodo -->
+            <div class="mb-3">
+              <label class="form-label text-dark font-weight-semibold">Periodo Facturado</label>
+              <input type="month" formControlName="periodo" class="form-control">
+              <div class="text-danger small mt-1" *ngIf="facturaForm.get('periodo')?.touched && facturaForm.get('periodo')?.invalid">El periodo es obligatorio</div>
+            </div>
+
+            <!-- Lecturas -->
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label text-dark font-weight-semibold">Lectura Anterior (m³)</label>
+                <input type="number" formControlName="lecturaAnterior" class="form-control bg-light" readonly>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label text-dark font-weight-semibold">Lectura Nueva Medida (m³)</label>
+                <input type="number" formControlName="lecturaNueva" class="form-control" placeholder="Ej. 245">
+                <div class="text-danger small mt-1" *ngIf="facturaForm.get('lecturaNueva')?.touched && facturaForm.get('lecturaNueva')?.invalid">La lectura nueva debe ser un número positivo</div>
+              </div>
+            </div>
+
+            <!-- Tarifa por Metro Cúbico -->
+            <div class="mb-3">
+              <label class="form-label text-dark font-weight-semibold">Tarifa por m³ (COP)</label>
+              <input type="number" formControlName="precioMetro" class="form-control">
+            </div>
+
+            <!-- Panel de Cálculo Automático -->
+            <div class="p-4 bg-light rounded-4 border mb-4 shadow-inner">
+              <h6 class="font-weight-bold text-secondary mb-3"><i class="fas fa-info-circle me-1"></i> Cálculo Inmediato de Consumo</h6>
+              <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+                <span class="text-muted">Metros Cúbicos Consumidos:</span>
+                <strong class="text-primary font-size-lg font-monospace">
+                  {{ facturaForm.get('consumo')?.value || 0 }} m³
+                </strong>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="text-muted">Total a Pagar (COP):</span>
+                <strong class="text-success font-size-xl font-monospace">
+                  {{ facturaForm.get('totalPagar')?.value | currency:'COP':'symbol-narrow':'1.0-0' }}
+                </strong>
+              </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+              <button type="button" class="btn btn-light rounded-pill px-4" (click)="setView('facturas')">Cancelar</button>
+              <button type="submit" class="btn btn-primary rounded-pill px-4" [disabled]="facturaForm.invalid || (facturaForm.get('lecturaNueva')?.value < facturaForm.get('lecturaAnterior')?.value)">
+                Generar Factura
+              </button>
+            </div>
+          </form>
         </div>
       </div>
 

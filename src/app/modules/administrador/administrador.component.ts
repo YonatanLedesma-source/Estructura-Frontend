@@ -53,12 +53,17 @@ export class AdministradorComponent implements OnInit {
   pagoForm: FormGroup;
   finanForm: FormGroup;
 
+  // Facturas y formulario de creación
+  facturasGlobales: Factura[] = [];
+  facturaForm: FormGroup;
+
   constructor(
     private fb: FormBuilder,
     private clienteService: ClienteService,
     private historialService: HistorialConsumoService,
     private pagosService: PagosService,
-    private finanService: FinanciacionService
+    private finanService: FinanciacionService,
+    private facturaService: FacturaService
   ) {
     // Inicializar Formulario de Clientes
     this.clienteForm = this.fb.group({
@@ -92,6 +97,52 @@ export class AdministradorComponent implements OnInit {
       cuotaMensual: [0, [Validators.required, Validators.min(1)]],
       saldoPendiente: [0, [Validators.required, Validators.min(0)]]
     });
+
+    // Inicializar Formulario de Facturación
+    this.facturaForm = this.fb.group({
+      id_cli: [null, Validators.required],
+      periodo: ['', Validators.required],
+      lecturaAnterior: [{ value: 0, disabled: true }],
+      lecturaNueva: [0, [Validators.required, Validators.min(0)]],
+      precioMetro: [2000, [Validators.required, Validators.min(1)]],
+      consumo: [{ value: 0, disabled: true }],
+      totalPagar: [{ value: 0, disabled: true }]
+    });
+
+    this.setupFacturaCalculations();
+  }
+
+  setupFacturaCalculations() {
+    this.facturaForm.get('id_cli')?.valueChanges.subscribe(idCli => {
+      if (idCli) {
+        const client = this.clientes.find(c => (c.id_cli || c.id) === Number(idCli));
+        if (client) {
+          const lecAnt = client.lectura || 0;
+          this.facturaForm.patchValue({
+            lecturaAnterior: lecAnt,
+            lecturaNueva: lecAnt
+          }, { emitEvent: true });
+        }
+      }
+    });
+
+    const calculate = () => {
+      const lecAnt = this.facturaForm.get('lecturaAnterior')?.value || 0;
+      const lecNue = this.facturaForm.get('lecturaNueva')?.value || 0;
+      const precio = this.facturaForm.get('precioMetro')?.value || 2000;
+
+      const consumo = Math.max(0, lecNue - lecAnt);
+      const total = consumo * precio;
+
+      this.facturaForm.patchValue({
+        consumo: consumo,
+        totalPagar: total
+      }, { emitEvent: false });
+    };
+
+    this.facturaForm.get('lecturaNueva')?.valueChanges.subscribe(() => calculate());
+    this.facturaForm.get('precioMetro')?.valueChanges.subscribe(() => calculate());
+    this.facturaForm.get('id_cli')?.valueChanges.subscribe(() => calculate());
   }
 
   ngOnInit(): void {
@@ -104,6 +155,7 @@ export class AdministradorComponent implements OnInit {
     this.cargarConsumosGlobales();
     this.cargarPagosGlobales();
     this.cargarFinanciacionesGlobales();
+    this.cargarFacturas();
   }
 
   // --- MÉTODOS DE DATOS ---
@@ -150,6 +202,14 @@ export class AdministradorComponent implements OnInit {
     });
   }
 
+  cargarFacturas() {
+    this.facturaService.listar().subscribe({
+      next: (data) => {
+        this.facturasGlobales = data;
+      }
+    });
+  }
+
   filtrarClientes() {
     const query = this.filtroBusqueda.toLowerCase().trim();
     if (!query) {
@@ -173,6 +233,9 @@ export class AdministradorComponent implements OnInit {
     } else if (view === 'dashboard') {
       this.clienteSeleccionado = null;
       this.cargarDatosDashboard();
+    } else if (view === 'facturas') {
+      this.clienteSeleccionado = null;
+      this.cargarFacturas();
     }
   }
 
@@ -429,6 +492,124 @@ export class AdministradorComponent implements OnInit {
 
   getFinanciacionesPendientes(): number {
     return this.financiacionesGlobales.reduce((acc, f) => acc + this.getSaldoPendiente(f), 0);
+  }
+
+  abrirCrearFactura() {
+    this.facturaForm.reset({
+      id_cli: null,
+      periodo: new Date().toISOString().substring(0, 7), // "YYYY-MM"
+      lecturaAnterior: 0,
+      lecturaNueva: 0,
+      precioMetro: 2000,
+      consumo: 0,
+      totalPagar: 0
+    });
+    this.currentView = 'crear-factura';
+    this.clienteSeleccionado = null;
+    this.cerrarMensajes();
+  }
+
+  guardarFactura() {
+    if (this.facturaForm.invalid) {
+      this.facturaForm.markAllAsTouched();
+      return;
+    }
+
+    const val = this.facturaForm.getRawValue();
+    const idCli = Number(val.id_cli);
+    const client = this.clientes.find(c => (c.id_cli || c.id) === idCli);
+    if (!client) {
+      this.error = 'Cliente no encontrado.';
+      return;
+    }
+
+    const lecAnt = val.lecturaAnterior || 0;
+    const lecNue = val.lecturaNueva || 0;
+    if (lecNue < lecAnt) {
+      this.error = 'La nueva lectura no puede ser inferior a la lectura anterior (' + lecAnt + ' m³).';
+      return;
+    }
+
+    this.cargando = true;
+    this.cerrarMensajes();
+
+    const consumo = lecNue - lecAnt;
+    const total = val.totalPagar;
+
+    // 1. Crear HistorialConsumo
+    const consumoPayload: HistorialConsumo = {
+      periodo: val.periodo,
+      metrosConsumidos: consumo,
+      valorTotal: total,
+      lecturaActual: lecNue,
+      idMedidor: client.numeroMedidor || 0,
+      cliente: { id_cli: idCli }
+    } as any;
+
+    this.historialService.crear(consumoPayload).subscribe({
+      next: (hcSaved: any) => {
+        // 2. Crear Factura
+        const numFactura = 'FAC-' + val.periodo.replace('-', '') + '-' + Math.floor(1000 + Math.random() * 9000);
+        
+        const facturaPayload: Factura = {
+          numero: numFactura,
+          periodo: val.periodo,
+          fechaEmision: new Date().toISOString().split('T')[0],
+          estado: 0, // 0 = Pendiente
+          zona: client.direccion || 'Veredal',
+          totalCuotas: 0,
+          totalPagar: total,
+          id_cli: idCli,
+          cliente: { id_cli: idCli },
+          historialConsumo: hcSaved
+        } as any;
+
+        this.facturaService.crear(facturaPayload).subscribe({
+          next: () => {
+            // 3. Actualizar Cliente (Lectura acumulada actual)
+            const updatedClient: Cliente = {
+              ...client,
+              lectura: lecNue
+            };
+            this.clienteService.actualizar(idCli, updatedClient).subscribe({
+              next: () => {
+                this.mensaje = 'Factura creada exitosamente y lectura de cliente actualizada.';
+                this.cargando = false;
+                this.setView('facturas');
+              },
+              error: () => {
+                this.error = 'Factura creada, pero no se pudo actualizar la lectura actual del cliente.';
+                this.cargando = false;
+                this.setView('facturas');
+              }
+            });
+          },
+          error: () => {
+            this.error = 'Error al registrar la factura en la base de datos.';
+            this.cargando = false;
+          }
+        });
+      },
+      error: () => {
+        this.error = 'Error al registrar el historial de consumo.';
+        this.cargando = false;
+      }
+    });
+  }
+
+  eliminarFactura(id: number | undefined) {
+    if (!id) return;
+    if (confirm('¿Estás seguro de que deseas eliminar permanentemente esta factura?')) {
+      this.facturaService.eliminar(id).subscribe({
+        next: () => {
+          this.mensaje = 'Factura eliminada de la base de datos.';
+          this.cargarFacturas();
+        },
+        error: () => {
+          this.error = 'No se pudo eliminar la factura.';
+        }
+      });
+    }
   }
 
   cerrarMensajes() {

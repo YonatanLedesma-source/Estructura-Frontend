@@ -354,3 +354,131 @@
     transform: translateY(0);
   }
 }
+
+// Invoices Section Styling (Premium SaaS style)
+.invoices-section {
+  margin-top: 3.5rem;
+  margin-bottom: 2rem;
+
+  .section-header {
+    margin-bottom: 1.5rem;
+    
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 750;
+      color: #0f172a;
+      margin: 0 0 0.5rem 0;
+    }
+
+    p {
+      color: #64748b;
+      font-size: 0.95rem;
+      margin: 0;
+    }
+  }
+}
+
+.invoices-card {
+  background: white;
+  border-radius: 1.5rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+  padding: 1rem;
+  overflow: hidden;
+}
+
+.invoices-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+
+  th {
+    text-align: left;
+    padding: 1rem 1.25rem;
+    font-weight: 600;
+    color: #64748b;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  td {
+    padding: 1.1rem 1.25rem;
+    color: #334155;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  .invoice-number {
+    color: #0f172a;
+    font-weight: 600;
+  }
+
+  .invoice-amount {
+    font-weight: 700;
+    color: #0ea5e9;
+    font-family: monospace;
+  }
+
+  .badge-status {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-align: center;
+
+    &.active {
+      background-color: #dcfce7;
+      color: #15803d;
+    }
+
+    &.suspended {
+      background-color: #fee2e2;
+      color: #b91c1c;
+    }
+  }
+
+  .btn-download {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #0f172a;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    &:hover {
+      background-color: #0f172a;
+      color: white;
+      border-color: #0f172a;
+      transform: translateY(-1px);
+    }
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 3.5rem !important;
+    color: #94a3b8;
+    font-weight: 500;
+  }
+}
+
+.delay-200 {
+  animation-delay: 0.2s;
+}
+

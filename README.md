@@ -59,6 +59,21 @@ Abrimos nuestro navegador de preferencia en la siguiente dirección:
 'http://localhost:4200'
 
 
+//COMO DESCARGAR EL PROYECTO//
+
+*Descargar como archivo ZIP*
+Si no tienes Git instalado o solo quieres revisar el código sin sincronizarlo con la nube:
+
+1. Entra al repositorio en GitHub.(https://github.com/YonatanLedesma-source/Backend.git)
+
+2. Haz clic en el botón verde Code.
+
+3. En el menú desplegable, haz clic en la última opción: Download ZIP.
+
+4. Una vez se descargue el archivo comprimido en tu computadora, haz clic derecho sobre él y selecciona Extraer aquí o Descomprimir.
+
+5. Abre VS Code, ve a File > Open Folder... y selecciona la carpeta que acabas de descomprimir.
+
 //REQUISITOS DEL DISPOSITIVO E INFRAESTRUCTURA//
 Para poder compilar y desplegar la aplicación completa a nivel local, el dispositivo debe cumplir con los siguientes requisitos del sistema:
 

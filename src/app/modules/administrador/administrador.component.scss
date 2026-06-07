@@ -604,3 +604,17 @@
     left: 70px;
   }
 }
+
+// Facturas premium styling helpers
+.font-size-lg {
+  font-size: 1.25rem;
+}
+.font-size-xl {
+  font-size: 1.6rem;
+}
+.shadow-inner {
+  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+}
+.font-weight-semibold {
+  font-weight: 600;
+}
